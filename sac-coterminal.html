@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coterminal Angles Explorer — Math 172</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--cr:#c8102e;--bg:#111114;--s1:#1c1c20;--s2:#26262c;--bd:#38383f;--tx:#eeeef0;--mu:#888896;--gld:#f5a623;--blu:#5b9eff;--pur:#b57bff;--tel:#2dd4bf;--grn:#4ecb71;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;}
+header{background:var(--s1);border-bottom:2.5px solid var(--cr);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:20;}
+.hd-left h1{font-size:1.1rem;font-weight:700;letter-spacing:-.01em;}
+.hd-left p{font-size:.65rem;color:var(--mu);font-family:'DM Mono',monospace;margin-top:1px;}
+.hd-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.tgl-grp{display:flex;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:3px;gap:2px;}
+.tgl{padding:5px 13px;border:none;background:transparent;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:600;border-radius:6px;cursor:pointer;transition:all .18s;}
+.tgl.on{background:var(--cr);color:#fff;}
+.pres-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1.5px solid var(--gld);background:transparent;color:var(--gld);font-family:'DM Sans',sans-serif;font-size:.76rem;font-weight:700;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.pres-btn:hover,.pres-btn.on{background:var(--gld);color:#111;}
+.pres-btn svg{width:14px;height:14px;flex-shrink:0;}
+main{flex:1;display:grid;grid-template-columns:1fr 310px;gap:16px;padding:16px;max-width:1000px;margin:0 auto;width:100%;}
+.cv-area{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.cv-wrap{width:100%;max-width:460px;aspect-ratio:1;background:var(--s1);border-radius:14px;border:1px solid var(--bd);padding:10px;}
+canvas{width:100%;height:100%;display:block;}
+.readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;width:100%;max-width:460px;}
+.rchip{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:8px 10px;}
+.rl{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--mu);margin-bottom:3px;}
+.rv{font-family:'DM Mono',monospace;font-size:.85rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.c-cr{color:var(--cr);}.c-gld{color:var(--gld);}.c-grn{color:var(--grn);}
+.legend{display:flex;flex-wrap:wrap;gap:10px;width:100%;max-width:460px;}
+.leg{display:flex;align-items:center;gap:6px;font-size:.7rem;color:var(--mu);}
+.ldot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.lline{width:15px;height:2.5px;border-radius:2px;flex-shrink:0;}
+.ctrl{display:flex;flex-direction:column;gap:12px;}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+.card-ttl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--mu);padding-bottom:7px;border-bottom:1px solid var(--bd);}
+.utgl{display:flex;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:3px;width:fit-content;}
+.utgl-btn{padding:4px 12px;border:none;background:transparent;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.73rem;font-weight:600;border-radius:5px;cursor:pointer;transition:all .18s;}
+.utgl-btn.on{background:var(--s1);color:var(--tx);border:1px solid var(--bd);}
+.num-row{display:flex;align-items:center;gap:8px;}
+.nw{display:flex;background:var(--s2);border:1px solid var(--bd);border-radius:8px;overflow:hidden;flex:1;align-items:center;}
+.nw input{background:transparent;border:none;outline:none;color:var(--tx);font-family:'DM Mono',monospace;font-size:.98rem;padding:7px 10px;width:100%;}
+.nw input[type=number]{-moz-appearance:textfield;}
+.nw input::-webkit-outer-spin-button,.nw input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.unit-badge{padding:7px 9px;background:var(--s1);color:var(--mu);font-size:.75rem;font-family:'DM Mono',monospace;border-left:1px solid var(--bd);white-space:nowrap;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:var(--bd);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:#fff;border:2.5px solid var(--cr);border-radius:50%;cursor:pointer;box-shadow:0 0 8px rgba(200,16,46,.35);}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:#fff;border:2.5px solid var(--cr);border-radius:50%;cursor:pointer;}
+.sl-labels{display:flex;justify-content:space-between;font-size:.58rem;color:var(--mu);font-family:'DM Mono',monospace;margin-top:3px;}
+.rot-row{display:flex;align-items:center;justify-content:center;gap:20px;}
+.rot-btn{width:44px;height:44px;border-radius:10px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);font-size:1.6rem;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;user-select:none;}
+.rot-btn:hover{background:var(--cr);border-color:var(--cr);}
+.rot-btn:active{transform:scale(.88);}
+.n-big{font-family:'DM Mono',monospace;font-size:2.1rem;font-weight:500;color:var(--gld);line-height:1;text-align:center;}
+.n-sub{font-size:.62rem;color:var(--mu);text-align:center;margin-top:3px;}
+.fbox{background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:12px;font-family:'DM Mono',monospace;font-size:.86rem;}
+.f-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;line-height:2.1;}
+.f-th{color:var(--cr);font-weight:500;}.f-n{color:var(--gld);font-weight:500;}.f-p{color:var(--blu);}.f-eq{color:var(--mu);}.f-ans{color:var(--grn);font-weight:600;font-size:.98rem;}
+.coords{font-family:'DM Mono',monospace;font-size:.74rem;color:var(--mu);background:var(--s2);border-radius:7px;padding:8px 10px;line-height:1.9;}
+.coords span{color:var(--tx);}
+.think-card{border-left:3px solid var(--gld);}
+.think-q{font-size:.83rem;line-height:1.55;}
+textarea{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;padding:8px 10px;resize:vertical;min-height:60px;outline:none;transition:border-color .2s;}
+textarea:focus{border-color:var(--cr);}
+.rev-btn{background:var(--cr);border:none;border-radius:8px;color:#fff;padding:7px 15px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .15s;}
+.rev-btn:hover{background:#a20d25;}
+.insight{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.25);border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.6;display:none;}
+.insight.show{display:block;}
+.teach-card{border-left:3px solid var(--cr);display:none;}
+.teach-card.show{display:flex;}
+.obs{font-size:.78rem;line-height:1.6;padding:4px 0;border-bottom:1px solid var(--bd);}
+.obs:last-child{border-bottom:none;}
+.obs-icon{color:var(--cr);margin-right:4px;}
+footer{text-align:center;padding:10px;font-size:.65rem;color:var(--mu);border-top:1px solid var(--bd);font-family:'DM Mono',monospace;}
+/* PRESENTER */
+body.presenter .hd-left p{display:none;}
+body.presenter main{grid-template-columns:1fr 260px;max-width:100%;padding:8px 12px;gap:12px;align-items:start;}
+body.presenter .cv-area{flex-direction:row;flex-wrap:wrap;align-items:flex-start;gap:10px;}
+body.presenter .cv-wrap{
+  max-width:min(calc(100vh - 100px), 100%);
+  width:min(calc(100vh - 100px), 100%);
+  flex-shrink:0;
+}
+body.presenter .readouts{max-width:100%;grid-template-columns:repeat(4,1fr);width:100%;}
+body.presenter .rl{font-size:.65rem;}
+body.presenter .rv{font-size:1.1rem;}
+body.presenter .legend{max-width:100%;width:100%;}
+body.presenter #thinkCard,body.presenter #teachCard,body.presenter #coordCard{display:none!important;}
+body.presenter .fbox{padding:16px;}
+body.presenter .f-row{font-size:1.1rem;gap:7px;}
+body.presenter .f-ans{font-size:1.22rem;}
+body.presenter .rot-btn{width:52px;height:52px;font-size:2rem;}
+body.presenter .n-big{font-size:2.8rem;}
+body.presenter footer{display:none;}
+.kbd-hint{display:none;font-size:.64rem;color:var(--mu);font-family:'DM Mono',monospace;text-align:center;line-height:1.9;background:var(--s2);border-radius:8px;padding:8px 10px;}
+body.presenter .kbd-hint{display:block;}
+@media(max-width:720px){main{grid-template-columns:1fr;padding:12px;gap:12px;}.cv-wrap,.readouts,.legend{max-width:100%;}.readouts{grid-template-columns:repeat(2,1fr);}body.presenter main{grid-template-columns:1fr;}body.presenter .cv-wrap{max-width:100%;width:100%;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd-left">
+    <h1>Coterminal Angles Explorer</h1>
+    <p>Math 172 · Precalculus · Santa Ana College</p>
+  </div>
+  <div class="hd-right">
+    <div class="tgl-grp">
+      <button class="tgl on" id="btnS" onclick="setMode('student')">Student</button>
+      <button class="tgl" id="btnT" onclick="setMode('teacher')">Teacher</button>
+    </div>
+    <button class="pres-btn" id="presBtn" onclick="togglePresenter()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      Presenter
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="cv-area">
+    <div class="cv-wrap">
+      <canvas id="cv" role="img" aria-label="Unit circle showing base angle and coterminal rotation rings"></canvas>
+    </div>
+    <div class="readouts">
+      <div class="rchip"><div class="rl">Base Angle θ</div><div class="rv c-cr" id="r-theta">45°</div></div>
+      <div class="rchip"><div class="rl">Rotations n</div><div class="rv c-gld" id="r-n">0</div></div>
+      <div class="rchip"><div class="rl">Coterminal</div><div class="rv c-grn" id="r-co">45°</div></div>
+      <div class="rchip"><div class="rl">Quadrant</div><div class="rv" id="r-quad">I</div></div>
+    </div>
+    <div class="legend" id="legendWrap">
+      <div class="leg"><div class="lline" style="background:var(--cr)"></div>Base arc (θ)</div>
+      <div class="leg"><div class="lline" style="background:rgba(255,255,255,.3);border:1px dashed rgba(255,255,255,.4)"></div>Initial side</div>
+      <div class="leg" id="leg1" style="display:none"><div class="ldot" style="background:var(--gld)"></div>Rotation 1</div>
+      <div class="leg" id="leg2" style="display:none"><div class="ldot" style="background:var(--blu)"></div>Rotation 2</div>
+      <div class="leg" id="leg3" style="display:none"><div class="ldot" style="background:var(--pur)"></div>Rotation 3</div>
+      <div class="leg" id="legSE" style="display:none"><div class="ldot" style="border:2px solid white;background:transparent"></div>Start/End marker</div>
+    </div>
+  </div>
+
+  <div class="ctrl">
+    <div class="card">
+      <div class="card-ttl">Base Angle θ</div>
+      <div class="utgl">
+        <button class="utgl-btn on" id="degBtn" onclick="setUnit('deg')">Degrees</button>
+        <button class="utgl-btn" id="radBtn" onclick="setUnit('rad')">Radians</button>
+      </div>
+      <div class="num-row">
+        <div class="nw">
+          <input type="number" id="angleIn" value="45" step="1" oninput="onAngleInput()"/>
+          <span class="unit-badge" id="ubadge">deg</span>
+        </div>
+      </div>
+      <div>
+        <input type="range" id="slider" min="-360" max="360" value="45" step="1" oninput="onSlider()" aria-label="Angle slider"/>
+        <div class="sl-labels"><span>−360°</span><span>0°</span><span>360°</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl">Full Rotations (n)</div>
+      <div class="rot-row">
+        <button class="rot-btn" onclick="changeN(-1)" aria-label="Subtract one rotation">−</button>
+        <div><div class="n-big" id="nBig">0</div><div class="n-sub">full rotations</div></div>
+        <button class="rot-btn" onclick="changeN(+1)" aria-label="Add one rotation">+</button>
+      </div>
+      <p style="font-size:.72rem;color:var(--mu);text-align:center;line-height:1.55">
+        Watch the <strong style="color:var(--gld)">start/end markers</strong> lock to the terminal side — same destination, extra lap(s) traveled.
+      </p>
+      <div class="kbd-hint">← → &nbsp;adjust θ by 15° &nbsp;|&nbsp; + − &nbsp;change rotations<br><span style="color:#555">Shift + ← → for 5° steps</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-ttl">Live Formula</div>
+      <div class="fbox">
+        <div class="f-row">
+          <span class="f-th" id="f-th">45°</span><span class="f-eq">+</span>
+          <span class="f-n" id="f-n">0</span><span class="f-eq">·</span>
+          <span class="f-p" id="f-p">360°</span><span class="f-eq">=</span>
+          <span class="f-ans" id="f-ans">45°</span>
+        </div>
+      </div>
+      <div class="coords" id="coordCard">
+        cos(<span id="cA">45°</span>) = <span id="cCos">0.7071</span><br>
+        sin(<span id="cA2">45°</span>) = <span id="cSin">0.7071</span><br>
+        Point: <span id="cPt">(0.7071, 0.7071)</span>
+      </div>
+    </div>
+
+    <div class="card think-card" id="thinkCard">
+      <div class="card-ttl">✦ Check Your Thinking</div>
+      <p class="think-q">With θ = <strong class="c-cr" id="tq-th">45°</strong>, add one more rotation. Where will the start/end marker appear? Write your prediction.</p>
+      <textarea id="predTxt" placeholder="My prediction: the marker will appear at…"></textarea>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="rev-btn" onclick="revealInsight()">Reveal Insight</button>
+        <span style="font-size:.7rem;color:var(--mu)">Predict before clicking!</span>
+      </div>
+      <div class="insight" id="insight">
+        💡 The marker always locks to the terminal side of <strong class="c-cr" id="i-th">45°</strong>. Every 360° rotation returns you to the same direction. <strong>Coterminal angles share a terminal side</strong> — different travel history, same destination.
+      </div>
+    </div>
+
+    <div class="card teach-card" id="teachCard">
+      <div class="card-ttl">📐 Teacher Notes</div>
+      <div class="obs"><span class="obs-icon">▸</span><strong>Markers:</strong> "Why do the start and end markers land at the same point?" — full rotation always returns to terminal side.</div>
+      <div class="obs"><span class="obs-icon">▸</span><strong>Edge case:</strong> θ = 0°, n = 1. Marker sits on initial side. Are 0° and 360° coterminal?</div>
+      <div class="obs"><span class="obs-icon">▸</span><strong>Negatives:</strong> θ = −45°, n = 1 → 315°. Marker doesn't move. Confirm coterminal visually.</div>
+      <div class="obs"><span class="obs-icon">▸</span><strong>Radians:</strong> Switch unit; marker stays fixed. θ ± n·2π = same concept.</div>
+      <div class="obs"><span class="obs-icon">▸</span><strong>Presenter:</strong> ← → keys sweep θ; +/− keys change n. No mouse needed while talking.</div>
+    </div>
+  </div>
+</main>
+
+<footer>Math 172 · Precalculus &nbsp;|&nbsp; Coterminal Angles Explorer v1.1 &nbsp;|&nbsp; Built for Santa Ana College</footer>
+
+<script>
+let thetaDeg=45, n=0, useRad=false, appMode='student', presMode=false;
+const ROT_COLORS=['#f5a623','#5b9eff','#b57bff','#2dd4bf','#4ecb71'];
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+
+function resize(){
+  const w=cv.parentElement.clientWidth-20;
+  const maxH=presMode?window.innerHeight-100:580;
+  cv.width=cv.height=Math.min(w,maxH);
+  draw();
+}
+window.addEventListener('resize',()=>setTimeout(resize,60));
+
+function draw(){
+  const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+  const R=Math.min(cx,cy)*0.77;
+  const tRad=thetaDeg*Math.PI/180;
+  const baseArcR=R*0.89;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#111114';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.035)';ctx.lineWidth=1;
+  const step=R/4;
+  for(let i=-6;i<=6;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*step,0);ctx.lineTo(cx+i*step,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*step);ctx.lineTo(W,cy+i*step);ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(cx-R-38,cy);ctx.lineTo(cx+R+38,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy-R-38);ctx.lineTo(cx,cy+R+38);ctx.stroke();
+
+  // Axis labels
+  const fSz=Math.round(W*0.027);
+  ctx.font=`500 ${fSz}px DM Sans`;ctx.fillStyle='rgba(255,255,255,0.28)';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('0°',cx+R+28,cy);ctx.fillText('90°',cx,cy-R-26);
+  ctx.fillText('180°',cx-R-32,cy);ctx.fillText('270°',cx,cy+R+26);
+
+  // Unit circle
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1.5;ctx.stroke();
+
+  // Quadrant ticks
+  [0,90,180,270].forEach(a=>{
+    const r=a*Math.PI/180;
+    ctx.beginPath();
+    ctx.moveTo(cx+(R-7)*Math.cos(r),cy-(R-7)*Math.sin(r));
+    ctx.lineTo(cx+(R+7)*Math.cos(r),cy-(R+7)*Math.sin(r));
+    ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1.5;ctx.stroke();
+  });
+
+  // Initial side dashed
+  ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R+10,cy);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── ROTATION RINGS ────────────────────────────────────────────────────
+  const absN=Math.abs(n);
+  for(let i=0;i<Math.min(absN,5);i++){
+    const rr=baseArcR*(0.90-i*0.17);
+    if(rr<R*0.20)break;
+    const col=ROT_COLORS[i];
+
+    // Dashed full-circle ring
+    ctx.setLineDash([7,5]);
+    ctx.beginPath();ctx.arc(cx,cy,rr,0,Math.PI*2);
+    ctx.strokeStyle=col;ctx.lineWidth=2.2;ctx.globalAlpha=0.42;ctx.stroke();
+    ctx.setLineDash([]);ctx.globalAlpha=1;
+
+    // Direction arrow on ring at ~145° ahead of terminal (CCW for positive n)
+    const dir=n>0?1:-1;
+    const arrowMathA=thetaDeg+dir*145;
+    const aRad=arrowMathA*Math.PI/180;
+    const ax=cx+rr*Math.cos(aRad),ay=cy-rr*Math.sin(aRad);
+    // Tangent for CCW (dir=1): (-sin, -cos) in canvas y-down coords
+    // Tangent for CW  (dir=-1): (sin, cos)
+    const atx=-Math.sin(aRad)*dir, aty=-Math.cos(aRad)*dir;
+    drawArrow(ax,ay,atx,aty,10,col,0.82);
+
+    // ── START/END marker at terminal-side intersection ──
+    const mx=cx+rr*Math.cos(tRad);
+    const my=cy-rr*Math.sin(tRad);
+    const nx=Math.cos(tRad), ny=-Math.sin(tRad); // outward normal (canvas)
+
+    // Outer tick (extends inward + outward from ring)
+    const tLen=rr*0.13;
+    ctx.beginPath();
+    ctx.moveTo(mx-nx*tLen,my-ny*tLen);
+    ctx.lineTo(mx+nx*tLen,my+ny*tLen);
+    ctx.strokeStyle=col;ctx.lineWidth=3.2;ctx.globalAlpha=0.92;ctx.stroke();
+    ctx.globalAlpha=1;
+
+    // Dot at intersection
+    ctx.beginPath();ctx.arc(mx,my,6.5,0,Math.PI*2);ctx.fillStyle=col;ctx.globalAlpha=0.9;ctx.fill();ctx.globalAlpha=1;
+    ctx.beginPath();ctx.arc(mx,my,3,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+
+    // Small return arc on inner radius showing it loops back to same spot
+    const rInner=rr*0.82;
+    const span=22*Math.PI/180;
+    const sArc=-tRad+span*dir;
+    const eArc=-tRad-span*dir;
+    const ccwCanvas=dir>0; // positive dir=CCW in math = anticlockwise=true in canvas
+    ctx.beginPath();ctx.arc(cx,cy,rInner,sArc,eArc,ccwCanvas);
+    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.globalAlpha=0.5;ctx.stroke();ctx.globalAlpha=1;
+    // Arrowhead at end of return arc
+    const eax=cx+rInner*Math.cos(eArc),eay=cy+rInner*Math.sin(eArc);
+    const etx=(!ccwCanvas?-1:1)*(-Math.sin(eArc));
+    const ety=(!ccwCanvas?-1:1)*(Math.cos(eArc));
+    drawArrow(eax,eay,etx,ety,7,col,0.65);
+
+    // Lap label pinned just outside the tick, along the outward normal
+    const lDist=tLen+15+(presMode?5:0);
+    const lx=mx+nx*lDist, ly=my+ny*lDist;
+    const fSzL=Math.round(W*(presMode?0.027:0.021));
+    ctx.font=`700 ${fSzL}px DM Mono`;
+    const ordinals=['1st','2nd','3rd','4th','5th'];
+    const tag=`${ordinals[i]} lap`;
+    const tw=ctx.measureText(tag).width;
+    ctx.fillStyle='rgba(17,17,20,0.75)';
+    ctx.beginPath();ctx.roundRect(lx-tw/2-4,ly-fSzL*0.7,tw+8,fSzL*1.4,4);ctx.fill();
+    ctx.fillStyle=col;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(tag,lx,ly);
+  }
+
+  // ── Base angle arc (crimson) ──
+  if(thetaDeg!==0){
+    const ccw=thetaDeg>0;
+    ctx.beginPath();ctx.arc(cx,cy,baseArcR,0,-tRad,ccw);
+    ctx.strokeStyle='#c8102e';ctx.lineWidth=3.5;ctx.globalAlpha=0.95;ctx.stroke();ctx.globalAlpha=1;
+    // Small inner angle indicator
+    ctx.beginPath();ctx.arc(cx,cy,baseArcR*0.23,0,-tRad,ccw);
+    ctx.strokeStyle='rgba(200,16,46,0.35)';ctx.lineWidth=1.5;ctx.stroke();
+  }
+
+  // Angle label inside arc
+  if(Math.abs(thetaDeg)>5){
+    const midA=tRad/2;
+    const lR=baseArcR*(Math.abs(thetaDeg)<50?0.55:0.47);
+    ctx.font=`700 ${Math.round(W*(presMode?.047:.038))}px DM Mono`;
+    ctx.fillStyle='#e8304a';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(fmtAngle(thetaDeg),cx+lR*Math.cos(midA),cy-lR*Math.sin(midA));
+  }
+
+  // ── Terminal side ──
+  const termX=cx+R*Math.cos(tRad),termY=cy-R*Math.sin(tRad);
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(termX,termY);
+  ctx.strokeStyle='rgba(200,16,46,.18)';ctx.lineWidth=13;ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(termX,termY);
+  ctx.strokeStyle='#c8102e';ctx.lineWidth=2.8;ctx.stroke();
+  const hdg=Math.atan2(termY-cy,termX-cx);
+  ctx.save();ctx.translate(termX,termY);ctx.rotate(hdg);
+  ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-13,-5);ctx.lineTo(-13,5);
+  ctx.closePath();ctx.fillStyle='#c8102e';ctx.fill();ctx.restore();
+  ctx.beginPath();ctx.arc(termX,termY,6.5,0,Math.PI*2);ctx.fillStyle='#c8102e';ctx.fill();
+  ctx.beginPath();ctx.arc(termX,termY,3,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fill();
+
+  if(thetaDeg===0){
+    ctx.font=`600 ${Math.round(W*.036)}px DM Mono`;ctx.fillStyle='#c8102e';
+    ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('θ = 0°',termX,termY-14);
+  }
+
+  // Presenter: big formula overlay at bottom of canvas
+  if(presMode&&absN>0){
+    const label=`θ + ${n}·${useRad?'2π':'360°'} = ${fmtAngle(cotermDeg())}`;
+    const fSzP=Math.round(W*0.04);
+    ctx.font=`700 ${fSzP}px DM Mono`;
+    const tw=ctx.measureText(label).width;
+    ctx.fillStyle='rgba(17,17,20,0.82)';
+    ctx.fillRect(cx-W/2+10,cy+R+6,tw+22,fSzP*1.55);
+    ctx.fillStyle='#4ecb71';ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText(label,cx-W/2+21,cy+R+10);
+  }
+
+  updateSlider();
+}
+
+function drawArrow(ax,ay,tx,ty,size,col,alpha){
+  const len=Math.sqrt(tx*tx+ty*ty)||1;
+  const ux=tx/len,uy=ty/len,px=-uy,py=ux;
+  ctx.save();ctx.globalAlpha=alpha??1;
+  ctx.beginPath();
+  ctx.moveTo(ax+ux*size,ay+uy*size);
+  ctx.lineTo(ax+px*(size*0.52),ay+py*(size*0.52));
+  ctx.lineTo(ax-px*(size*0.52),ay-py*(size*0.52));
+  ctx.closePath();ctx.fillStyle=col;ctx.fill();
+  ctx.restore();
+}
+
+function fmtAngle(deg){return useRad?degToRadStr(deg):deg+'°';}
+function degToRadStr(deg){
+  if(deg===0)return'0';
+  const gcd=(a,b)=>b?gcd(b,a%b):a;
+  const sign=deg<0?'−':'';const abs=Math.abs(deg);
+  const g=gcd(abs,180);const num=abs/g,den=180/g;
+  if(den===1)return sign+(num===1?'π':num+'π');
+  return sign+(num===1?'π':num+'π')+'/'+den;
+}
+function quadrant(deg){
+  const a=((deg%360)+360)%360;
+  if([0,90,180,270].includes(a))return'Axis';
+  if(a<90)return'I';if(a<180)return'II';if(a<270)return'III';return'IV';
+}
+function cotermDeg(){return thetaDeg+n*360;}
+
+function update(){
+  const co=cotermDeg(),tR=thetaDeg*Math.PI/180;
+  const cosV=Math.cos(tR),sinV=Math.sin(tR);
+  const fmt=(v,d=4)=>v.toFixed(d).replace(/^-0$/,'0');
+  document.getElementById('r-theta').textContent=fmtAngle(thetaDeg);
+  document.getElementById('r-n').textContent=n;
+  document.getElementById('r-co').textContent=fmtAngle(co);
+  document.getElementById('r-quad').textContent=quadrant(thetaDeg);
+  document.getElementById('nBig').textContent=n;
+  document.getElementById('f-th').textContent=fmtAngle(thetaDeg);
+  document.getElementById('f-n').textContent=n;
+  document.getElementById('f-p').textContent=useRad?'2π':'360°';
+  document.getElementById('f-ans').textContent=fmtAngle(co);
+  const aLbl=fmtAngle(thetaDeg);
+  document.getElementById('cA').textContent=aLbl;
+  document.getElementById('cA2').textContent=aLbl;
+  document.getElementById('cCos').textContent=fmt(cosV);
+  document.getElementById('cSin').textContent=fmt(sinV);
+  document.getElementById('cPt').textContent=`(${fmt(cosV,3)}, ${fmt(sinV,3)})`;
+  document.getElementById('tq-th').textContent=fmtAngle(thetaDeg);
+  document.getElementById('i-th').textContent=fmtAngle(thetaDeg);
+  const absN=Math.abs(n);
+  for(let i=1;i<=3;i++)document.getElementById('leg'+i).style.display=absN>=i?'':'none';
+  document.getElementById('legSE').style.display=absN>0?'':'none';
+  draw();
+}
+
+function updateSlider(){
+  const sl=document.getElementById('slider');
+  const pct=((thetaDeg+360)/720)*100;
+  sl.style.background=`linear-gradient(to right,var(--cr) ${pct}%,var(--bd) ${pct}%)`;
+}
+
+function onAngleInput(){
+  const raw=parseFloat(document.getElementById('angleIn').value);
+  if(isNaN(raw))return;
+  thetaDeg=useRad?Math.round(raw*180/Math.PI):Math.round(raw);
+  thetaDeg=Math.max(-360,Math.min(360,thetaDeg));
+  document.getElementById('slider').value=thetaDeg;
+  update();
+}
+function onSlider(){
+  thetaDeg=parseInt(document.getElementById('slider').value);
+  document.getElementById('angleIn').value=useRad?(thetaDeg*Math.PI/180).toFixed(2):thetaDeg;
+  update();
+}
+function changeN(delta){
+  const next=n+delta;if(Math.abs(next)>5)return;
+  n=next;document.getElementById('insight').classList.remove('show');update();
+}
+function setUnit(u){
+  useRad=u==='rad';
+  document.getElementById('degBtn').classList.toggle('on',!useRad);
+  document.getElementById('radBtn').classList.toggle('on',useRad);
+  document.getElementById('ubadge').textContent=useRad?'rad':'deg';
+  const inp=document.getElementById('angleIn');
+  if(useRad){inp.step='0.01';inp.min='-6.30';inp.max='6.30';inp.value=(thetaDeg*Math.PI/180).toFixed(2);}
+  else{inp.step='1';inp.min='-360';inp.max='360';inp.value=thetaDeg;}
+  update();
+}
+function setMode(m){
+  appMode=m;
+  document.getElementById('btnS').classList.toggle('on',m==='student');
+  document.getElementById('btnT').classList.toggle('on',m==='teacher');
+  document.getElementById('thinkCard').style.display=m==='student'?'':'none';
+  document.getElementById('teachCard').classList.toggle('show',m==='teacher');
+}
+function revealInsight(){document.getElementById('insight').classList.add('show');}
+
+function togglePresenter(){
+  presMode=!presMode;
+  document.body.classList.toggle('presenter',presMode);
+  document.getElementById('presBtn').classList.toggle('on',presMode);
+  const btn=document.getElementById('presBtn');
+  btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> ${presMode?'Exit Presenter':'Presenter'}`;
+  setTimeout(resize,80);
+}
+
+document.addEventListener('keydown',e=>{
+  if(!presMode)return;
+  if(['ArrowLeft','ArrowRight','+','-','=','_'].includes(e.key))e.preventDefault();
+  const step=e.shiftKey?5:15;
+  if(e.key==='ArrowLeft'){thetaDeg=Math.max(-360,thetaDeg-step);syncInputs();update();}
+  if(e.key==='ArrowRight'){thetaDeg=Math.min(360,thetaDeg+step);syncInputs();update();}
+  if(e.key==='+'||e.key==='=')changeN(+1);
+  if(e.key==='-'||e.key==='_')changeN(-1);
+});
+function syncInputs(){
+  document.getElementById('slider').value=thetaDeg;
+  document.getElementById('angleIn').value=useRad?(thetaDeg*Math.PI/180).toFixed(2):thetaDeg;
+}
+
+resize();update();
+</script>
+</body>
+</html>
